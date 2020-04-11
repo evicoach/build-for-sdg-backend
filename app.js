@@ -67,8 +67,8 @@ app.get('/', (req, res) => {
   res.send('You have to send a post request with input data!');
 });
 
-app.post('/api/v1/on-covid-19', (req, res, next) => {
-    jsonRep(req, res);
+app.post('/api/v1/on-covid-19', (req, res) => {
+    jsonRes(req, res);
 });
 
 app.post('/api/v1/on-covid-19/json', (req, res)=>{
