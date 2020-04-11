@@ -77,6 +77,7 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 });
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
+  res.setHeader("Content-Type", "text/plain");
  res.end(currentLog);
 });
 
