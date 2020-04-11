@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const convert = require('xml-js');
@@ -5,6 +6,7 @@ const estimator = require('./estimator');
 
 const app = express();
 const port = process.env.PORT || 5000;
+let currentLog = "";
 
 app.use(cors());
 app.use(express.json());
@@ -24,6 +26,25 @@ const getDurationInMilliseconds = (start)=>{
   return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
 }
 
+const logger = (req, res, startTime)=>{
+  const durationInMilliseconds =  parseInt(getDurationInMilliseconds(startTime));
+    console.log(`${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds} ms\n`);
+    const log = `${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds} ms\n`;
+    /**
+     * Read the log file
+     * write the current log to it
+     * persist it 
+     * send the log to the user
+     */
+    fs.readFile('log.txt', (err, data)=>{
+      currentLog = data + log;
+    });
+
+    fs.writeFile('log.txt', log, {flag: 'a'}, ()=>{
+      console.log('Log saved successfully');
+    });
+}
+
 const jsonRes = (req, res)=>{
   const data = req.body;
   res.setHeader("Content-Type", "application/json");
@@ -33,12 +54,10 @@ const jsonRes = (req, res)=>{
 app.use((req, res, next)=>{
   const start = process.hrtime();
   res.on('finish', ()=>{
-    const durationInMilliseconds =  parseInt(getDurationInMilliseconds(start));
-    console.log(`${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds}\n ms`);
+    logger(req, res, start);
   });
   res.on('close', ()=>{
-    const durationInMilliseconds =  parseInt(getDurationInMilliseconds(start));
-    console.log(`${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds}\n ms`);
+   logger(req, res, start);
   });
 
   next();
@@ -65,16 +84,9 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 });
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
-  /**
-   * use morgan
-   * or
-   * create an object for each request that has the 
-   * {method, path, resultStatus code, time}
-   * push each object into an array
-   * persist the array
-   */
+ res.send(currentLog);
 });
 
 app.listen(port, ()=>{
   console.log(`Estimator is running on port ${port}`);
-})
+});
