@@ -5,8 +5,8 @@ const convert = require('xml-js');
 const estimator = require('./estimator');
 
 const app = express();
-const port = process.env.PORT || 5000;
 let currentLog = "";
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -28,21 +28,11 @@ const getDurationInMilliseconds = (start)=>{
 
 const logger = (req, res, startTime)=>{
   const durationInMilliseconds =  parseInt(getDurationInMilliseconds(startTime));
-    console.log(`${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds} ms\n`);
-    const log = `${req.method} ${req.path} ${res.statusCode} ${durationInMilliseconds} ms\n`;
-    /**
-     * Read the log file
-     * write the current log to it
-     * persist it 
-     * send the log to the user
-     */
-    fs.readFile('log.txt', (err, data)=>{
-      currentLog = data + log;
-    });
+    console.log(`${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds} ms\n`);
+    const log = `${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds} ms\n`;
 
-    fs.writeFile('log.txt', log, {flag: 'a'}, ()=>{
-      console.log('Log saved successfully');
-    });
+    fs.writeFileSync('log.txt', log, {flag: 'a'});
+    currentLog = fs.readFileSync('log.txt');
 }
 
 const jsonRes = (req, res)=>{
@@ -51,11 +41,14 @@ const jsonRes = (req, res)=>{
   res.status(200);
   res.send(JSON.stringify(estimator(data)));
 }
+
 app.use((req, res, next)=>{
   const start = process.hrtime();
   res.on('finish', ()=>{
+    console.log('[[finishing]]')
     logger(req, res, start);
   });
+
   res.on('close', ()=>{
    logger(req, res, start);
   });
@@ -84,7 +77,7 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 });
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
- res.send(currentLog);
+ res.end(currentLog);
 });
 
 app.listen(port, ()=>{
