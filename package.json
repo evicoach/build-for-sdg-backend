@@ -1,0 +1,23 @@
+{
+  "name": "buildforsdgbackend",
+  "version": "1.0.0",
+  "description": "An API for estimating the spread and effect of covid-19",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EviCoach/build-for-sdg-backend.git"
+  },
+  "author": "Evi Owhotemu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EviCoach/build-for-sdg-backend/issues"
+  },
+  "homepage": "https://github.com/EviCoach/build-for-sdg-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  }
+}
