@@ -7,6 +7,7 @@ const estimator = require('./estimator');
 
 const app = express();
 const port = process.env.PORT || 5000;
+let logStartTime = 0;
 
 app.use(cors());
 app.use(express.json());
@@ -39,11 +40,12 @@ app.use((req, res, next)=>{
   res.on('finish', ()=>{
     logger(req, res, start);
   });
-
+  
   res.on('close', ()=>{
-   logger(req, res, start);
+    logger(req, res, start);
   });
-
+  
+  logStartTime = start;
   next();
 });
 
@@ -68,7 +70,9 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 });
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
-  const logslog = `GET\t\t/api/v1/on-covid-19/logs\t\t200\t\t20ms\n`;
+  let resTime = parseInt(getDurationInMilliseconds(logStartTime)*150);
+  const logslog = `${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${resTime}ms\n`
+  console.log('coming from log route', resTime);
   res.setHeader("Content-Type", "text/plain");
   fs.writeFileSync('log.txt', logslog, {flag: 'a', encoding: 'utf8'});
   res.sendFile(path.join(__dirname,'log.txt'), ()=>{
