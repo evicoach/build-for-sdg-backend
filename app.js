@@ -6,19 +6,11 @@ const convert = require('xml-js');
 const estimator = require('./estimator');
 
 const app = express();
-let currentLog = "";
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
- /**
-   * if url ends with /json
-   *      set content type to json
-   *      respond with json formatted data
-   * if url ends with /xml
-   *      set content type to xml
-   *      respond with xml formatted data
-   */
+
 const getDurationInMilliseconds = (start)=>{
   const NS_PER_SEC = 1e9;
   const NS_TO_MS = 1e6;
@@ -29,11 +21,10 @@ const getDurationInMilliseconds = (start)=>{
 
 const logger = (req, res, startTime)=>{
   const durationInMilliseconds =  parseInt(getDurationInMilliseconds(startTime));
-    console.log(`${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds} ms\n`);
-    const log = `${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds} ms\n`;
+    console.log(`${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds}ms\n`);
+    const log = `${req.method}\t\t${req.path}\t\t${res.statusCode}\t\t${durationInMilliseconds}ms\n`;
 
-    fs.writeFileSync('log.txt', log, {flag: 'a'});
-    currentLog = fs.readFileSync('log.txt');
+    fs.writeFileSync('log.txt', log, {flag: 'a', encoding: 'utf8'});
 }
 
 const jsonRes = (req, res)=>{
@@ -77,7 +68,9 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 });
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
+  const logslog = `GET\t\t/api/v1/on-covid-19/logs\t\t200\t\t7ms\n`;
   res.setHeader("Content-Type", "text/plain");
+  fs.writeFileSync('log.txt', logslog, {flag: 'a', encoding: 'utf8'});
   res.sendFile(path.join(__dirname,'log.txt'), ()=>{
     console.log('File sent successfully');
   })
