@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
@@ -77,7 +78,7 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
   res.setHeader("Content-Type", "text/plain");
-  res.sendFile('log.txt', ()=>{
+  res.sendFile(path.join(__dirname,'log.txt'), ()=>{
     console.log('File sent successfully');
   })
 });
