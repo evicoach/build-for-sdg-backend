@@ -45,7 +45,6 @@ const jsonRes = (req, res)=>{
 app.use((req, res, next)=>{
   const start = process.hrtime();
   res.on('finish', ()=>{
-    console.log('[[finishing]]')
     logger(req, res, start);
   });
 
@@ -78,7 +77,9 @@ app.post('/api/v1/on-covid-19/xml', (req, res)=>{
 
 app.get('/api/v1/on-covid-19/logs', (req, res) => {
   res.setHeader("Content-Type", "text/plain");
- res.end(currentLog);
+  res.sendFile('log.txt', ()=>{
+    console.log('File sent successfully');
+  })
 });
 
 app.listen(port, ()=>{
