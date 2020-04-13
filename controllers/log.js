@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const log = (req, res)=>{
   const logFile = path.resolve(path.join(__dirname,'../log.txt'));
@@ -7,6 +8,9 @@ const log = (req, res)=>{
   res.status(200);
   res.sendFile(logFile, (err)=>{
     console.log('Log sent successfully');
+    fs.unlinkSync(logFile, ()=>{
+      console.log('file cleared');
+    });
   });
 }
 
