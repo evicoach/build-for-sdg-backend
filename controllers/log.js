@@ -5,7 +5,9 @@ const log = (req, res)=>{
   res.setHeader("Content-Type", "text/plain");
   res.setHeader("Location", "https://covid-19-estimator-sdg.herokuapp.com/api/v1/on-covid-19/logs");
   res.status(200);
-  res.sendFile(logFile);
+  res.sendFile(logFile, (err)=>{
+    console.log('Log sent successfully');
+  });
 }
 
 module.exports = log;
