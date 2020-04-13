@@ -8,9 +8,9 @@ const log = (req, res)=>{
   res.status(200);
   res.sendFile(logFile, (err)=>{
     console.log('Log sent successfully');
-    fs.unlinkSync(logFile, ()=>{
-      console.log('file cleared');
-    });
+    // fs.unlinkSync(logFile, ()=>{
+    //   console.log('file cleared');
+    // });
   });
 }
 
